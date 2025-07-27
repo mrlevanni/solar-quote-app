@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Footer</title>
+</head>
+<body>
+    <h1>Test Company Footer Logic</h1>
+    
+    <script>
+        // Test footer logic
+        const companyInfo = {
+            name: "CÔNG TY TEST",
+            slogan: "Slogan test",
+            phone: "1900-5555",
+            email: "test@company.vn", 
+            address: "456 Nguyễn Huệ, Quận 1, TP.HCM"
+        };
+        
+        // Same logic as in PDF generator
+        const footerParts = [];
+        if (companyInfo.address) {
+            footerParts.push(`Địa chỉ: ${companyInfo.address}`);
+        }
+        if (companyInfo.phone) {
+            footerParts.push(`Điện thoại: ${companyInfo.phone}`);
+        }
+        if (companyInfo.email) {
+            footerParts.push(`Email: ${companyInfo.email}`);
+        }
+        
+        const footerContact = footerParts.length > 0 
+            ? footerParts.join(' | ')
+            : 'Địa chỉ: 123 Đường ABC, Quận XYZ, TP.HCM | Điện thoại: 1900-SOLAR | Email: info@solar.vn';
+            
+        console.log('Footer result:', footerContact);
+        document.body.innerHTML += '<p><strong>Footer Result:</strong></p>';
+        document.body.innerHTML += '<p>' + footerContact + '</p>';
+    </script>
+</body>
+</html>
