@@ -1,22 +1,14 @@
+# wrangler.toml - Cấu hình đã được tối giản
+
 # Cấu hình chính
 name = "solar-quote-app"
 compatibility_date = "2024-01-01"
 
-# Cấu hình build ở cấp cao nhất
-pages_build_command = "npm run build"
-pages_build_output_dir = "public"
-
-# Biến môi trường
+# Có thể giữ lại các biến môi trường nếu cần
 [vars]
 NODE_ENV = "production"
 
-# Cấu hình Functions ở cấp cao nhất
-[functions]
-directory = "functions"
-compatibility_date = "2024-01-01"
-compatibility_flags = ["nodejs_compat"]
-
-# Cấu hình D1 Databases (nếu cần)
+# Có thể giữ lại cấu hình D1 nếu cần
 # [[d1_databases]]
 # binding = "DB"
 # database_name = "solar-quote-db"
