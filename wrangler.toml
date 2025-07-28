@@ -2,21 +2,22 @@
 name = "solar-quote-app"
 compatibility_date = "2024-01-01"
 
-[build]
-command = "npm run build"
+# Build settings (đặt ở cấp cao nhất)
+pages_build_command = "npm run build"
 pages_build_output_dir = "public"
-publish = "public"
 
+# Environment variables
+[vars]
+NODE_ENV = "production"
 
-[[pages.env_vars]]
-name = "NODE_ENV"
-value = "production"
-
-[pages.functions]
+# Pages Functions configuration
+[functions]
 directory = "functions"
 compatibility_date = "2024-01-01"
 compatibility_flags = ["nodejs_compat"]
 
-[pages.d1_databases]
-# Add D1 database binding if needed in the future
-# solar_db = { database_name = "solar-quote-db", database_id = "your-database-id" }
+# D1 database bindings
+# [[d1_databases]]
+# binding = "DB" # Tên biến bạn sẽ dùng trong code
+# database_name = "solar-quote-db"
+# database_id = "your-database-id"
