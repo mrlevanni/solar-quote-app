@@ -5,7 +5,7 @@ compatibility_date = "2024-01-01"
 [build]
 command = "npm run build"
 publish = "public"
-
+pages_build_output_dir = "publi" 
 [[pages.env_vars]]
 name = "NODE_ENV"
 value = "production"
