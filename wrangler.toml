@@ -1,23 +1,21 @@
-# Cloudflare Pages configuration
+# wrangler.toml
+
 name = "solar-quote-app"
 compatibility_date = "2024-01-01"
 
-# Build settings (đặt ở cấp cao nhất)
-pages_build_command = "npm run build"
+# Thuộc tính này có thể giữ ở cấp cao nhất
 pages_build_output_dir = "public"
 
-# Environment variables
 [vars]
 NODE_ENV = "production"
 
-# Pages Functions configuration
-[functions]
-directory = "functions"
-compatibility_date = "2024-01-01"
-compatibility_flags = ["nodejs_compat"]
+# Đặt các cấu hình dành riêng cho Pages vào trong mục [pages]
+[pages]
+  # Di chuyển lệnh build vào đây và đổi tên thành 'command'
+  command = "npm run build"
 
-# D1 database bindings
-# [[d1_databases]]
-# binding = "DB" # Tên biến bạn sẽ dùng trong code
-# database_name = "solar-quote-db"
-# database_id = "your-database-id"
+  # Cấu hình functions cũng nên nằm trong [pages]
+  [pages.functions]
+    directory = "./functions"
+    compatibility_date = "2024-01-01"
+    compatibility_flags = ["nodejs_compat"]
