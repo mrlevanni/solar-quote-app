@@ -2,9 +2,10 @@
 name = "solar-quote-app"
 compatibility_date = "2024-01-01"
 
-[build]
-command = "npm run build"
-publish = "public"
+# === PHẦN SỬA LỖI ===
+pages_build_command = "npm run build"
+pages_build_output_dir = "public"
+# =====================
 
 [[pages.env_vars]]
 name = "NODE_ENV"
@@ -15,6 +16,6 @@ directory = "functions"
 compatibility_date = "2024-01-01"
 compatibility_flags = ["nodejs_compat"]
 
-[pages.d1_databases]
+# [pages.d1_databases]
 # Add D1 database binding if needed in the future
 # solar_db = { database_name = "solar-quote-db", database_id = "your-database-id" }
