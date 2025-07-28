@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Solar Quote - Tư Vấn Báo Giá Điện Mặt Trời</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #f39c12;
+            --secondary-color: #27ae60;
+            --dark-color: #2c3e50;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .main-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            margin: 2rem auto;
+            max-width: 1200px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem;
+            border-radius: 20px 20px 0 0;
+            text-align: center;
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+        
+        .step {
+            display: flex;
+            align-items: center;
+            margin: 0 1rem;
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        
+        .step.active .step-number {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .step.completed .step-number {
+            background: var(--secondary-color);
+            color: white;
+        }
+        
+        .form-section {
+            display: none;
+            padding: 2rem;
+        }
+        
+        .form-section.active {
+            display: block;
+        }
+        
+        .solar-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .btn-solar {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-solar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            color: white;
+        }
+        
+        .quote-item {
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: #f8f9fa;
+        }
+        
+        .price-highlight {
+            color: var(--primary-color);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .savings-card {
+            background: linear-gradient(135deg, var(--secondary-color), #2ecc71);
+            color: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .company-info {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .spinner-border {
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="main-container">
+            <!-- Header -->
+            <div class="header">
+                <i class="fas fa-solar-panel solar-icon"></i>
+                <h1>Solar Quote Pro</h1>
+                <p class="mb-0">Tư vấn báo giá hệ thống điện mặt trời chuyên nghiệp</p>
+            </div>
+
+            <!-- Step Indicator -->
+            <div class="step-indicator">
+                <div class="step active" id="step1">
+                    <div class="step-number">1</div>
+                    <span>Thông tin KH</span>
+                </div>
+                <div class="step" id="step2">
+                    <div class="step-number">2</div>
+                    <span>Báo giá & PDF</span>
+                </div>
+            </div>
+
+            <!-- Database Upload Section -->
+            <div class="text-center mb-4">
+                <button type="button" class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#databaseModal">
+                    <i class="fas fa-database me-2"></i>
+                    Cập nhật Database Excel
+                </button>
+                <button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#companyModal">
+                    <i class="fas fa-building me-2"></i>
+                    Cài đặt công ty
+                </button>
+            </div>
+
+            <!-- Form Section 1: Customer Information -->
+            <div class="form-section active" id="section1">
+                <h3 class="text-center mb-4">
+                    <i class="fas fa-user me-2"></i>
+                    Thông tin khách hàng
+                </h3>
+                
+                <form id="customerForm">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="customerName" class="form-label">
+                                    <i class="fas fa-user me-1"></i>
+                                    Tên khách hàng *
+                                </label>
+                                <input type="text" class="form-control" id="customerName" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="customerPhone" class="form-label">
+                                    <i class="fas fa-phone me-1"></i>
+                                    Số điện thoại
+                                </label>
+                                <input type="tel" class="form-control" id="customerPhone" placeholder="0123 456 789">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="monthlyBill" class="form-label">
+                                    <i class="fas fa-file-invoice-dollar me-1"></i>
+                                    Tiền điện hàng tháng (VND) *
+                                </label>
+                                <input type="number" class="form-control" id="monthlyBill" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="customerAddress" class="form-label">
+                            <i class="fas fa-map-marker-alt me-1"></i>
+                            Địa chỉ khách hàng
+                        </label>
+                        <textarea class="form-control" id="customerAddress" rows="2" placeholder="Nhập địa chỉ khách hàng"></textarea>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="monthlyConsumption" class="form-label">
+                                    <i class="fas fa-bolt me-1"></i>
+                                    Tiêu thụ hàng tháng (kWh)
+                                </label>
+                                <input type="number" class="form-control" id="monthlyConsumption" step="0.1">
+                                <div class="form-text">Để trống để tự động tính từ tiền điện</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="electricityPrice" class="form-label">
+                                    <i class="fas fa-money-bill me-1"></i>
+                                    Giá điện (VND/kWh)
+                                </label>
+                                <input type="number" class="form-control" id="electricityPrice" value="2500">
+                                <div class="form-text">Giá điện trung bình</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="dailyConsumption" class="form-label">
+                                    <i class="fas fa-calendar-day me-1"></i>
+                                    Tiêu thụ hàng ngày (kWh)
+                                </label>
+                                <input type="number" class="form-control" id="dailyConsumption" readonly>
+                                <div class="form-text">Tự động tính từ tiêu thụ hàng tháng</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="savingsPercent" class="form-label">
+                                    <i class="fas fa-percentage me-1"></i>
+                                    Muốn tiết kiệm (%) *
+                                </label>
+                                <select class="form-select" id="savingsPercent" required>
+                                    <option value="">Chọn mức tiết kiệm</option>
+                                    <option value="30">30%</option>
+                                    <option value="50">50%</option>
+                                    <option value="70">70%</option>
+                                    <option value="80">80%</option>
+                                    <option value="100">100%</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="morningUsage" class="form-label">
+                                    <i class="fas fa-sun me-1"></i>
+                                    Sử dụng buổi sáng (%)
+                                </label>
+                                <input type="number" class="form-control" id="morningUsage" min="0" max="100" value="40">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="eveningUsage" class="form-label">
+                                    <i class="fas fa-moon me-1"></i>
+                                    Sử dụng buổi tối (%)
+                                </label>
+                                <input type="number" class="form-control" id="eveningUsage" min="0" max="100" value="60">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-solar btn-lg">
+                            <i class="fas fa-calculator me-2"></i>
+                            Tính toán báo giá
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Form Section 2: Quote Display -->
+            <div class="form-section" id="section2">
+                <h3 class="text-center mb-4">
+                    <i class="fas fa-file-invoice me-2"></i>
+                    Báo giá hệ thống
+                </h3>
+                
+                <div id="quoteResult">
+                    <!-- Quote will be displayed here -->
+                </div>
+                
+                <div class="text-center mt-4">
+                    <button class="btn btn-outline-secondary me-3" onclick="goToStep(1)">
+                        <i class="fas fa-arrow-left me-2"></i>
+                        Quay lại
+                    </button>
+                    <button class="btn btn-solar" onclick="goToStep(3)">
+                        <i class="fas fa-edit me-2"></i>
+                        Tùy chỉnh báo giá
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sections 3 and 4 removed - now using inline editing and modal PDF generation -->
+
+            <!-- Loading -->
+            <div class="loading" id="loading">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-3">Đang xử lý...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Database Upload Modal -->
+    <div class="modal fade" id="databaseModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-database me-2"></i>
+                        Cập nhật Database Excel
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Lưu ý:</strong> File Excel phải có 4 sheet: PV_Panels, Batteries, Inverters, Accessories
+                    </div>
+                    
+                    <form id="databaseUploadForm" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="databaseFile" class="form-label">
+                                <i class="fas fa-file-excel me-1"></i>
+                                Chọn file Excel (.xlsx)
+                            </label>
+                            <input type="file" class="form-control" id="databaseFile" 
+                                   accept=".xlsx,.xls" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <a href="data/solar_database.xlsx" class="btn btn-outline-secondary" download>
+                                <i class="fas fa-download me-2"></i>
+                                Tải file mẫu
+                            </a>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-primary" onclick="uploadDatabase()">
+                        <i class="fas fa-upload me-2"></i>
+                        Upload Database
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Company Settings Modal -->
+    <div class="modal fade" id="companyModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-building me-2"></i>
+                        Cài đặt thông tin công ty
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="companySettingsForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="modalCompanyName" class="form-label">
+                                        <i class="fas fa-building me-1"></i>
+                                        Tên công ty *
+                                    </label>
+                                    <input type="text" class="form-control" id="modalCompanyName" 
+                                           value="Solar Energy Solutions" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="modalCompanySlogan" class="form-label">
+                                        <i class="fas fa-quote-left me-1"></i>
+                                        Slogan
+                                    </label>
+                                    <input type="text" class="form-control" id="modalCompanySlogan" 
+                                           value="Năng lượng xanh cho tương lai">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="modalCompanyPhone" class="form-label">
+                                        <i class="fas fa-phone me-1"></i>
+                                        Số điện thoại
+                                    </label>
+                                    <input type="tel" class="form-control" id="modalCompanyPhone" 
+                                           placeholder="0123 456 789">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="modalCompanyEmail" class="form-label">
+                                        <i class="fas fa-envelope me-1"></i>
+                                        Email
+                                    </label>
+                                    <input type="email" class="form-control" id="modalCompanyEmail" 
+                                           placeholder="info@company.com">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="modalCompanyAddress" class="form-label">
+                                <i class="fas fa-map-marker-alt me-1"></i>
+                                Địa chỉ
+                            </label>
+                            <textarea class="form-control" id="modalCompanyAddress" rows="2" 
+                                      placeholder="Nhập địa chỉ công ty"></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="modalCompanyLogo" class="form-label">
+                                <i class="fas fa-image me-1"></i>
+                                Logo công ty
+                            </label>
+                            <input type="file" class="form-control" id="modalCompanyLogo" 
+                                   accept="image/*">
+                            <div class="form-text">Kích thước khuyến nghị: 200x200px, định dạng PNG/JPG</div>
+                        </div>
+                        
+                        <div id="logoPreview" class="text-center" style="display: none;">
+                            <img id="logoPreviewImg" src="" alt="Logo Preview" 
+                                 style="max-width: 100px; max-height: 100px; border: 1px solid #ddd; border-radius: 5px;">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-primary" onclick="saveCompanySettings()">
+                        <i class="fas fa-save me-2"></i>
+                        Lưu cài đặt
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
