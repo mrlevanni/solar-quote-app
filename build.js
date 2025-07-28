@@ -4,13 +4,21 @@ const path = require('path');
 // Build script for Cloudflare Pages
 function buildForCloudflarePages() {
     console.log('🚀 Building for Cloudflare Pages...');
-    
+
     // Create functions directory for Cloudflare Pages
     const functionsDir = path.join(__dirname, 'functions');
     if (!fs.existsSync(functionsDir)) {
         fs.mkdirSync(functionsDir, { recursive: true });
     }
-    
+
+    // === LỖI ĐÃ ĐƯỢC SỬA TẠI ĐÂY ===
+    // Create directory structure for functions *before* writing files to it
+    const apiFunctionsDir = path.join(functionsDir, 'api');
+    if (!fs.existsSync(apiFunctionsDir)) {
+        fs.mkdirSync(apiFunctionsDir, { recursive: true });
+    }
+    // ===============================
+
     // Create API endpoints as Cloudflare Functions
     const apiEndpoints = [
         'equipment',
@@ -19,7 +27,7 @@ function buildForCloudflarePages() {
         'upload-database',
         'generate-pdf'
     ];
-    
+
     apiEndpoints.forEach(endpoint => {
         const functionContent = `
 const { DataReader } = require('../src/utils/dataReader');
@@ -88,19 +96,13 @@ export async function onRequestGet(context) {
     return new Response('Method not allowed', { status: 405 });
 }
         `;
-        
+
         fs.writeFileSync(
-            path.join(functionsDir, `api`, `${endpoint}.js`),
+            path.join(apiFunctionsDir, `${endpoint}.js`), // Sửa lại để dùng biến đã tạo
             functionContent.trim()
         );
     });
-    
-    // Create directory structure for functions
-    const apiFunctionsDir = path.join(functionsDir, 'api');
-    if (!fs.existsSync(apiFunctionsDir)) {
-        fs.mkdirSync(apiFunctionsDir, { recursive: true });
-    }
-    
+
     console.log('✅ Build completed successfully!');
     console.log('📁 Functions created in:', functionsDir);
 }
@@ -114,7 +116,7 @@ function copyFilesToPublic() {
     // Copy data files
     if (fs.existsSync(dataDir)) {
         const publicDataDir = path.join(publicDir, 'data');
-        if (!fs.existsSync(publicDataDir)) {
+        if (!fs.existsSync(publicDataTir)) {
             fs.mkdirSync(publicDataDir, { recursive: true });
         }
         
